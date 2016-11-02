@@ -12,6 +12,11 @@ from statistics import mode
 import json
 import urllib
 
+# class VoteClassifier(ClassifierI):
+#     def __init__(self,*classifiers):
+#         self._classifiers
+
+
 documents = [(list(movie_reviews.words(fileid)), category)
              for category in movie_reviews.categories()
              for fileid in movie_reviews.fileids(category)]
@@ -48,7 +53,7 @@ classifier_f = open("naivebayes.pickle", "rb")
 classifier = pickle.load(classifier_f)
 classifier_f.close()
 
-print("Bayes classifier accuracy:", (nltk.classify.accuracy(classifier,testing_set))*100)
+print("Bayes classifier accuracy:", (nltk.classify.accuracy(classifier, testing_set))*100)
 classifier.show_most_informative_features(15)
 
 MNB_classifier = SklearnClassifier(MultinomialNB())

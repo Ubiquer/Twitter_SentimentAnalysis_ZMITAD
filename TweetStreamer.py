@@ -9,17 +9,17 @@ from nltk.corpus import stopwords
 
 
 
-# class listener(StreamListener):
-#
-#     def on_data(self, data):
-#         print(data)
-#         return True
-#     def on_error(self, status_code):
-#         print(status_code)
-#
-#
-# auth = OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_secret)
-#
-# twitterStream = Stream(auth, listener())
-# twitterStream.filter(track=["Trump"])
+class listener(StreamListener):
+
+    def on_data(self, data):
+        print(data)
+        return True
+    def on_error(self, status_code):
+        print(status_code)
+
+
+auth = OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+
+twitterStream = Stream(auth, listener())
+twitterStream.filter(track=["Trump"])
