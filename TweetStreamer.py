@@ -4,6 +4,9 @@ from py_stuff import *
 import re
 from tweepy.streaming import StreamListener
 from nltk.corpus import stopwords
+import random
+import nltk
+from nltk.corpus import movie_reviews
 import json
 import urllib
 
@@ -45,19 +48,36 @@ import urllib
 # WP$	possessive wh-pronoun	whose
 # WRB	wh-abverb	where, when
 
+documents = [(list(movie_reviews.words(fileid)), category)
+             for category in movie_reviews.categories()
+             for fileid in movie_reviews.fileids(category)]
+
+random.shuffle(documents)
+
+print(documents[1])
+
+all_words = []
+
+for w in movie_reviews.words():
+    all_words.append(w.lower())
+
+all_words = nltk.FreqDist(all_words)
+print(all_words.most_common(15))
 
 
-class listener(StreamListener):
-
-    def on_data(self, data):
-        print(data)
-        return True
-    def on_error(self, status_code):
-        print(status_code)
 
 
-auth = OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_secret)
-
-twitterStream = Stream(auth, listener())
-twitterStream.filter(track=["Trump"])
+# class listener(StreamListener):
+#
+#     def on_data(self, data):
+#         print(data)
+#         return True
+#     def on_error(self, status_code):
+#         print(status_code)
+#
+#
+# auth = OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_secret)
+#
+# twitterStream = Stream(auth, listener())
+# twitterStream.filter(track=["Trump"])
