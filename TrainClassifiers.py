@@ -1,11 +1,13 @@
 import pickle
 import random
 import nltk
+import numpy
 from nltk.corpus import movie_reviews
 from nltk.classify.scikitlearn import SklearnClassifier
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
+
 from nltk.classify import ClassifierI
 from statistics import mode
 
@@ -13,9 +15,26 @@ import json
 import urllib
 
 # class VoteClassifier(ClassifierI):
-#     def __init__(self,*classifiers):
-#         self._classifiers
-
+#     def __init__(self, *classifiers):
+#         self._classifiers = classifiers
+#
+#     def classify(self, features):
+#         votes = []
+#         for c in self._classifiers:    # c stands for classifier
+#             v = c.classify(features)   # for each classifier we are getting the vote
+#             votes.append(v)
+#         return mode(votes)
+#
+#     def confidence(self, features):
+#         votes = []
+#         for c in self._classifiers:
+#             v = c.classify(features)
+#             votes.append(v)
+#
+#         choice_votes = votes.count(mode(votes)) # how many occurances of most popular votes were in list of votes
+#         conf = choice_votes / len(votes)  # certainty
+#
+#         return conf
 
 documents = [(list(movie_reviews.words(fileid)), category)
              for category in movie_reviews.categories()
@@ -60,6 +79,10 @@ MNB_classifier = SklearnClassifier(MultinomialNB())
 MNB_classifier.train(training_set)
 print("MNB_classifier accuracy:", (nltk.classify.accuracy(MNB_classifier,testing_set))*100)
 
+LogisticRegression_classifier = SklearnClassifier(LogisticRegression())
+LogisticRegression_classifier.train(training_set)
+print("LogisticRegression_classifier accuracy:", (nltk.classify.accuracy(LogisticRegression_classifier, testing_set))*100)
+
 # GaussianNB_classifier = SklearnClassifier(GaussianNB())
 # GaussianNB_classifier.train(training_set)
 # print("GaussianNB_classifier accuracy:", (nltk.classify.accuracy(GaussianNB_classifier, testing_set))*100)
@@ -88,3 +111,20 @@ print("LinearSVC_classifier accuracy:", (nltk.classify.accuracy(LinearSVC_classi
 # save_classifier = open("naivebayes.pickle", "wb")
 # pickle.dump(classifier, save_classifier)
 # save_classifier.close()
+
+
+voted_classifier = VoteClassifier(classifier,
+                                  MNB_classifier,
+                                  BernoulliNB_classifier,
+                                  SGDClassifier_classifier,
+                                  LogisticRegression_classifier,
+                                  LinearSVC_classifier,
+                                  NuSVC_classifier)
+
+print("voted_classifier accuracy: ", (nltk.classify.accuracy(voted_classifier, testing_set))*100)
+print("Classification: ", voted_classifier.classify(testing_set[0][0]), "Confidence %:", voted_classifier.confidence(testing_set[0][0])*100)
+print("Classification: ", voted_classifier.classify(testing_set[1][0]), "Confidence %:", voted_classifier.confidence(testing_set[1][0])*100)
+print("Classification: ", voted_classifier.classify(testing_set[2][0]), "Confidence %:", voted_classifier.confidence(testing_set[2][0])*100)
+print("Classification: ", voted_classifier.classify(testing_set[3][0]), "Confidence %:", voted_classifier.confidence(testing_set[3][0])*100)
+print("Classification: ", voted_classifier.classify(testing_set[4][0]), "Confidence %:", voted_classifier.confidence(testing_set[4][0])*100)
+print("Classification: ", voted_classifier.classify(testing_set[5][0]), "Confidence %:", voted_classifier.confidence(testing_set[5][0])*100)
